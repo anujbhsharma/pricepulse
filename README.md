@@ -7,6 +7,10 @@ matters — when something hits a new all-time low or drops hard.
 No accounts, no browser extensions, no cloud. A CLI, a database file, and
 opinions about when a deal is real.
 
+**[🚀 Live demo](https://anujbhsharma.github.io/pricepulse/)** — the
+dashboard running on fictional sample data, right in your browser. For your
+real prices, run it locally (see [Dashboard](#dashboard)).
+
 ## Quickstart
 
 ```bash
@@ -96,6 +100,11 @@ server:
 `POST /api/check` never dies on a bad fetch: per-product failures land in
 `errors`, manual-provider products (Costco et al.) are skipped gracefully,
 and every error comes back as clean JSON — no tracebacks, ever.
+
+Want to poke at it without installing anything? The
+[🚀 live demo](https://anujbhsharma.github.io/pricepulse/) is this same
+dashboard as a static page on GitHub Pages, running on fictional sample
+data in `docs/` (forms work in-memory for the session).
 
 ## Run it on a schedule
 

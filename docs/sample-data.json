@@ -1,0 +1,241 @@
+{
+  "note": "Fictional demo data for the pricepulse GitHub Pages demo. 'products' matches GET /api/products exactly; 'alerts' matches GET /api/alerts. All prices invented.",
+  "products": [
+    {
+      "id": 1,
+      "name": "Nova Buds Pro wireless earbuds",
+      "url": "#",
+      "provider": "Best Buy Canada",
+      "latest": {
+        "price": 119.99,
+        "currency": "CAD",
+        "in_stock": true,
+        "checked_at": "2026-09-24T09:24:00"
+      },
+      "atl": 119.99,
+      "is_atl": true,
+      "history": [
+        {
+          "price": 169.99,
+          "checked_at": "2026-07-26T09:15:00"
+        },
+        {
+          "price": 164.99,
+          "checked_at": "2026-08-02T09:16:00"
+        },
+        {
+          "price": 159.99,
+          "checked_at": "2026-08-09T09:17:00"
+        },
+        {
+          "price": 164.99,
+          "checked_at": "2026-08-16T09:18:00"
+        },
+        {
+          "price": 154.99,
+          "checked_at": "2026-08-23T09:19:00"
+        },
+        {
+          "price": 149.99,
+          "checked_at": "2026-08-30T09:20:00"
+        },
+        {
+          "price": 154.99,
+          "checked_at": "2026-09-06T09:21:00"
+        },
+        {
+          "price": 144.99,
+          "checked_at": "2026-09-13T09:22:00"
+        },
+        {
+          "price": 139.99,
+          "checked_at": "2026-09-18T09:23:00"
+        },
+        {
+          "price": 119.99,
+          "checked_at": "2026-09-24T09:24:00"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "PixelPaper 7\" e-reader",
+      "url": "#",
+      "provider": "Amazon.ca",
+      "latest": {
+        "price": 159.99,
+        "currency": "CAD",
+        "in_stock": true,
+        "checked_at": "2026-09-24T09:23:00"
+      },
+      "atl": 154.99,
+      "is_atl": false,
+      "history": [
+        {
+          "price": 199.99,
+          "checked_at": "2026-07-28T09:15:00"
+        },
+        {
+          "price": 189.99,
+          "checked_at": "2026-08-04T09:16:00"
+        },
+        {
+          "price": 154.99,
+          "checked_at": "2026-08-11T09:17:00"
+        },
+        {
+          "price": 184.99,
+          "checked_at": "2026-08-18T09:18:00"
+        },
+        {
+          "price": 174.99,
+          "checked_at": "2026-08-25T09:19:00"
+        },
+        {
+          "price": 169.99,
+          "checked_at": "2026-09-01T09:20:00"
+        },
+        {
+          "price": 179.99,
+          "checked_at": "2026-09-08T09:21:00"
+        },
+        {
+          "price": 184.99,
+          "checked_at": "2026-09-15T09:22:00"
+        },
+        {
+          "price": 159.99,
+          "checked_at": "2026-09-24T09:23:00"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "RoboSweep S9 robot vacuum",
+      "url": "#",
+      "provider": "Walmart Canada",
+      "latest": {
+        "price": 549.0,
+        "currency": "CAD",
+        "in_stock": false,
+        "checked_at": "2026-09-24T09:25:00"
+      },
+      "atl": 529.99,
+      "is_atl": false,
+      "history": [
+        {
+          "price": 599.99,
+          "checked_at": "2026-07-26T09:15:00"
+        },
+        {
+          "price": 579.99,
+          "checked_at": "2026-08-01T09:16:00"
+        },
+        {
+          "price": 559.99,
+          "checked_at": "2026-08-07T09:17:00"
+        },
+        {
+          "price": 579.99,
+          "checked_at": "2026-08-13T09:18:00"
+        },
+        {
+          "price": 549.99,
+          "checked_at": "2026-08-19T09:19:00"
+        },
+        {
+          "price": 529.99,
+          "checked_at": "2026-08-25T09:20:00"
+        },
+        {
+          "price": 549.99,
+          "checked_at": "2026-08-31T09:21:00"
+        },
+        {
+          "price": 559.99,
+          "checked_at": "2026-09-06T09:22:00"
+        },
+        {
+          "price": 539.99,
+          "checked_at": "2026-09-12T09:23:00"
+        },
+        {
+          "price": 549.99,
+          "checked_at": "2026-09-18T09:24:00"
+        },
+        {
+          "price": 549.0,
+          "checked_at": "2026-09-24T09:25:00"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "VoltPack 25,000mAh power bank",
+      "url": "#",
+      "provider": "Manual",
+      "latest": {
+        "price": 89.99,
+        "currency": "CAD",
+        "in_stock": true,
+        "checked_at": "2026-09-24T09:22:00"
+      },
+      "atl": 84.99,
+      "is_atl": false,
+      "history": [
+        {
+          "price": 94.99,
+          "checked_at": "2026-07-29T09:15:00"
+        },
+        {
+          "price": 89.99,
+          "checked_at": "2026-08-05T09:16:00"
+        },
+        {
+          "price": 94.99,
+          "checked_at": "2026-08-12T09:17:00"
+        },
+        {
+          "price": 89.99,
+          "checked_at": "2026-08-19T09:18:00"
+        },
+        {
+          "price": 84.99,
+          "checked_at": "2026-08-26T09:19:00"
+        },
+        {
+          "price": 89.99,
+          "checked_at": "2026-09-02T09:20:00"
+        },
+        {
+          "price": 89.99,
+          "checked_at": "2026-09-10T09:21:00"
+        },
+        {
+          "price": 89.99,
+          "checked_at": "2026-09-24T09:22:00"
+        }
+      ]
+    }
+  ],
+  "alerts": [
+    {
+      "product": "Nova Buds Pro wireless earbuds",
+      "url": "#",
+      "price": 119.99,
+      "currency": "CAD",
+      "previous_price": 139.99,
+      "drop_pct": 14.3,
+      "at_all_time_low": true
+    },
+    {
+      "product": "PixelPaper 7\" e-reader",
+      "url": "#",
+      "price": 159.99,
+      "currency": "CAD",
+      "previous_price": 184.99,
+      "drop_pct": 13.5,
+      "at_all_time_low": false
+    }
+  ]
+}
