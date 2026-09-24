@@ -69,6 +69,34 @@ Notes:
 - Same-day delivery apps (Instacart, Uber Eats) list Costco inventory with
   visible prices and no login — handy for `pricepulse record` entries.
 
+## Dashboard
+
+Prefer eyeballs over terminal? The dashboard is a single-page web UI —
+product cards with hand-rolled SVG price-history sparklines, an ALL-TIME LOW
+badge when the latest sample is the floor, a live alerts panel, and forms
+for adding products, logging prices by hand, and re-checking everything.
+
+```bash
+pricepulse dashboard            # serves http://127.0.0.1:8000
+pricepulse dashboard --port 0   # let the OS pick a free port (it prints the URL)
+```
+
+No frameworks, no CDN, no build step: one HTML file with inline CSS/JS,
+served from the standard library. It talks to a tiny JSON API on the same
+server:
+
+| Endpoint | What it does |
+|---|---|
+| `GET /api/products` | every product: latest price, stock, ATL, `is_atl`, full history |
+| `GET /api/alerts` | current alerts from the same logic as `pricepulse check` |
+| `POST /api/add` | `{"name", "url"}` — track a product |
+| `POST /api/record` | `{"name", "price", "currency"?, "out_of_stock"?}` — log a price |
+| `POST /api/check` | fetch all products → `{"alerts": [...], "errors": [...]}` |
+
+`POST /api/check` never dies on a bad fetch: per-product failures land in
+`errors`, manual-provider products (Costco et al.) are skipped gracefully,
+and every error comes back as clean JSON — no tracebacks, ever.
+
 ## Run it on a schedule
 
 One line in your crontab — checks every Monday at 9am, appends to a log:
@@ -81,7 +109,7 @@ One line in your crontab — checks every Monday at 9am, appends to a log:
 
 ```bash
 pip install -e ".[dev]"
-pytest            # 36 tests, all offline — fixtures live in tests/fixtures/
+pytest            # 44 tests, all offline — fixtures live in tests/fixtures/
 ```
 
 Project layout:
@@ -92,6 +120,8 @@ pricepulse/
   providers.py    Provider protocol + JSON-LD scrapers + manual fallback
   store.py        SQLite storage (products, samples)
   analysis.py     all-time-low + alert logic
+  dashboard.py    stdlib HTTP server + JSON API for the dashboard
+  static/         the dashboard page (single HTML file, inline CSS/JS)
   cli.py          argparse CLI, `pricepulse` entry point
 tests/
   fixtures/       saved HTML pages used by provider tests (no network)

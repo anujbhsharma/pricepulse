@@ -32,5 +32,8 @@ pricepulse = "pricepulse.cli:main"
 [tool.setuptools.packages.find]
 include = ["pricepulse*"]
 
+[tool.setuptools.package-data]
+pricepulse = ["static/*.html"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

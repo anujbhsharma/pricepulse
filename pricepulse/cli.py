@@ -1,11 +1,12 @@
 """Command-line interface for pricepulse.
 
 Subcommands:
-    add      track a new product by name and URL
-    check    fetch every tracked product, store samples, print alerts
-    history  show the recorded price history for a product
-    atl      show the all-time low for a product
-    record   manually log a price (for bot-walled stores like Costco)
+    add       track a new product by name and URL
+    check     fetch every tracked product, store samples, print alerts
+    history   show the recorded price history for a product
+    atl       show the all-time low for a product
+    record    manually log a price (for bot-walled stores like Costco)
+    dashboard start a local web dashboard to browse everything
 """
 
 from __future__ import annotations
@@ -138,6 +139,12 @@ def cmd_record(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_dashboard(args: argparse.Namespace) -> int:
+    from . import dashboard
+
+    return dashboard.serve(port=args.port, db_path=args.db)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="pricepulse", description="Track gadget prices across Canadian retailers."
@@ -179,6 +186,14 @@ def build_parser() -> argparse.ArgumentParser:
         "--out-of-stock", action="store_true", help="mark the item out of stock"
     )
     p_record.set_defaults(func=cmd_record)
+
+    p_dash = sub.add_parser(
+        "dashboard", help="start a local web dashboard in your browser"
+    )
+    p_dash.add_argument(
+        "--port", type=int, default=8000, help="port to listen on (default: 8000)"
+    )
+    p_dash.set_defaults(func=cmd_dashboard)
 
     return parser
 

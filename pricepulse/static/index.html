@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pricepulse — dashboard</title>
+<style>
+  :root {
+    --accent: #d64545;
+    --accent-soft: #fdeeee;
+    --ink: #1c1c1e;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --card: #ffffff;
+    --bg: #f7f7f8;
+    --green: #16803c;
+    --amber: #b45309;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0 16px 48px;
+    background: var(--bg); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 15px; line-height: 1.45;
+  }
+  header {
+    max-width: 1100px; margin: 0 auto; padding: 28px 4px 12px;
+    display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap;
+  }
+  header h1 { margin: 0; font-size: 30px; letter-spacing: -0.5px; }
+  header h1 .bolt { color: var(--accent); }
+  header .sub { color: var(--muted); margin: 0; flex: 1; min-width: 200px; }
+  button, input[type=submit] {
+    font: inherit; cursor: pointer;
+    border: 1px solid var(--accent); background: var(--accent); color: #fff;
+    border-radius: 8px; padding: 9px 18px; font-weight: 600;
+  }
+  button:hover, input[type=submit]:hover { filter: brightness(0.94); }
+  button:disabled { opacity: 0.55; cursor: wait; }
+  main { max-width: 1100px; margin: 0 auto; }
+  section.card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 12px; padding: 18px 20px; margin: 14px 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  section.card h2 { margin: 0 0 12px; font-size: 17px; letter-spacing: -0.2px; }
+  .alert {
+    border-left: 4px solid var(--accent); background: var(--accent-soft);
+    border-radius: 0 8px 8px 0; padding: 10px 14px; margin: 8px 0;
+  }
+  .alert .tag {
+    display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: 0.6px;
+    background: var(--accent); color: #fff; border-radius: 4px;
+    padding: 2px 7px; margin-right: 8px; vertical-align: 1px;
+  }
+  .alert .price { font-variant-numeric: tabular-nums; font-weight: 700; }
+  .alert a { color: var(--ink); }
+  .quiet { color: var(--muted); font-style: italic; }
+  table { width: 100%; border-collapse: collapse; }
+  th {
+    text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.6px;
+    color: var(--muted); font-weight: 700; padding: 8px 10px; border-bottom: 2px solid var(--line);
+  }
+  td { padding: 12px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  .pname { font-weight: 700; }
+  .pname a { color: var(--ink); text-decoration: none; }
+  .pname a:hover { color: var(--accent); text-decoration: underline; }
+  .prov {
+    display: inline-block; font-size: 11px; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 20px; padding: 1px 8px; margin-left: 8px;
+  }
+  .num { font-variant-numeric: tabular-nums; font-weight: 700; white-space: nowrap; }
+  .stock-ok { color: var(--green); font-weight: 600; }
+  .stock-out { color: var(--accent); font-weight: 600; }
+  .stock-na { color: var(--muted); }
+  .checked { color: var(--muted); font-size: 13px; white-space: nowrap; }
+  .atlbadge {
+    display: inline-block; font-size: 11px; font-weight: 800; letter-spacing: 0.6px;
+    background: var(--accent); color: #fff; border-radius: 4px; padding: 2px 7px;
+    margin-left: 8px; vertical-align: 1px;
+  }
+  .forms { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 760px) { .forms { grid-template-columns: 1fr; } }
+  label { display: block; font-size: 13px; font-weight: 600; margin: 10px 0 4px; }
+  input[type=text], input[type=url], input[type=number], select {
+    font: inherit; width: 100%; padding: 8px 10px;
+    border: 1px solid var(--line); border-radius: 8px; background: #fff;
+  }
+  input:focus, select:focus { outline: 2px solid var(--accent); outline-offset: -1px; border-color: var(--accent); }
+  .row { display: flex; gap: 10px; }
+  .row > div { flex: 1; }
+  .checkline { margin-top: 12px; font-size: 13px; }
+  #msg { position: sticky; top: 0; z-index: 5; }
+  .toast {
+    max-width: 1100px; margin: 10px auto 0; padding: 10px 16px; border-radius: 8px;
+    font-weight: 600; font-size: 14px;
+  }
+  .toast.ok { background: #e7f6ec; color: var(--green); border: 1px solid #bfe6cc; }
+  .toast.err { background: var(--accent-soft); color: #a02a2a; border: 1px solid #f3c2c2; }
+  .errline { color: #a02a2a; font-size: 13px; margin: 6px 0 0; }
+  footer { max-width: 1100px; margin: 26px auto 0; color: var(--muted); font-size: 13px; }
+  footer code { background: #eee; border-radius: 4px; padding: 1px 5px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1><span class="bolt">⚡</span> pricepulse</h1>
+  <p class="sub">your gadgets, watched like a hawk</p>
+  <button id="checkBtn" type="button">Check now</button>
+</header>
+<div id="msg"></div>
+
+<main>
+  <section class="card" id="alertsCard">
+    <h2>🚨 Alerts</h2>
+    <div id="alertList"><p class="quiet">loading…</p></div>
+  </section>
+
+  <section class="card">
+    <h2>📦 Tracked products</h2>
+    <div style="overflow-x:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th><th>Price</th><th>Stock</th><th>Last checked</th><th>Trend</th>
+        </tr>
+      </thead>
+      <tbody id="productRows">
+        <tr><td colspan="5" class="quiet">loading…</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <div class="checkline" id="checkResult"></div>
+  </section>
+
+  <div class="forms">
+    <section class="card">
+      <h2>➕ Track a product</h2>
+      <form id="addForm">
+        <label for="addName">Name</label>
+        <input type="text" id="addName" placeholder="Anker 25K power bank" required>
+        <label for="addUrl">Product URL</label>
+        <input type="url" id="addUrl" placeholder="https://www.bestbuy.ca/en-ca/product/…" required>
+        <p class="checkline"><input type="submit" value="Start tracking"></p>
+      </form>
+    </section>
+
+    <section class="card">
+      <h2>✍️ Log a price by hand</h2>
+      <form id="recordForm">
+        <label for="recProduct">Product</label>
+        <select id="recProduct"></select>
+        <div class="row">
+          <div>
+            <label for="recPrice">Price</label>
+            <input type="number" id="recPrice" step="0.01" min="0.01" placeholder="129.99" required>
+          </div>
+          <div>
+            <label for="recCurrency">Currency</label>
+            <input type="text" id="recCurrency" value="CAD" maxlength="3">
+          </div>
+        </div>
+        <p class="checkline">
+          <label style="display:inline;font-weight:400">
+            <input type="checkbox" id="recOos"> out of stock
+          </label>
+        </p>
+        <p><input type="submit" value="Record price"></p>
+      </form>
+    </section>
+  </div>
+
+  <footer>
+    Prices refresh with <code>pricepulse check</code> or the Check now button.
+    Bot-walled stores (Costco, we're looking at you) need prices logged by hand.
+  </footer>
+</main>
+
+<script>
+"use strict";
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+function money(price, currency) {
+  return price.toFixed(2) + " " + esc(currency);
+}
+
+function relTime(iso) {
+  if (!iso) return "—";
+  const then = new Date(iso).getTime();
+  if (isNaN(then)) return "—";
+  const s = Math.max(0, (Date.now() - then) / 1000);
+  if (s < 60) return "just now";
+  if (s < 3600) return Math.floor(s / 60) + "m ago";
+  if (s < 86400) return Math.floor(s / 3600) + "h ago";
+  if (s < 86400 * 30) return Math.floor(s / 86400) + "d ago";
+  return new Date(iso).toLocaleDateString();
+}
+
+/* Hand-rolled inline-SVG sparkline. No libraries were harmed. */
+function sparkline(history) {
+  const w = 140, h = 38, pad = 4;
+  if (!history || !history.length) {
+    return '<span class="stock-na">no data yet</span>';
+  }
+  const prices = history.map(s => s.price);
+  const min = Math.min(...prices), max = Math.max(...prices);
+  const span = (max - min) || 1;
+  const n = prices.length;
+  const x = i => n === 1 ? w / 2 : pad + i * (w - 2 * pad) / (n - 1);
+  const y = p => h - pad - ((p - min) / span) * (h - 2 * pad);
+  const pts = prices.map((p, i) => x(i).toFixed(1) + "," + y(p).toFixed(1)).join(" ");
+  const lx = x(n - 1), ly = y(prices[n - 1]);
+  const minIdx = prices.indexOf(min);
+  const tip = history.map(s =>
+    new Date(s.checked_at).toLocaleString() + ": " + s.price.toFixed(2)
+  ).join("  •  ");
+  return '<svg width="' + w + '" height="' + h + '" viewBox="0 0 ' + w + ' ' + h +
+    '" role="img" aria-label="price history"><title>' + esc(tip) + '</title>' +
+    '<polyline points="' + pts + '" fill="none" stroke="#d64545" stroke-width="2" ' +
+    'stroke-linejoin="round" stroke-linecap="round"/>' +
+    (minIdx !== n - 1
+      ? '<circle cx="' + x(minIdx).toFixed(1) + '" cy="' + y(min).toFixed(1) +
+        '" r="3" fill="#16803c"><title>all-time low</title></circle>'
+      : '') +
+    '<circle cx="' + lx.toFixed(1) + '" cy="' + ly.toFixed(1) +
+    '" r="3.5" fill="#d64545"/></svg>';
+}
+
+function toast(kind, text) {
+  const box = document.getElementById("msg");
+  box.innerHTML = '<div class="toast ' + kind + '">' + esc(text) + '</div>';
+  setTimeout(() => { box.innerHTML = ""; }, 6000);
+}
+
+function renderAlerts(alerts) {
+  const el = document.getElementById("alertList");
+  if (!alerts.length) {
+    el.innerHTML = '<p class="quiet">All quiet — nothing at an all-time low or dropping hard.</p>';
+    return;
+  }
+  el.innerHTML = alerts.map(a => {
+    const tags = [];
+    if (a.at_all_time_low) tags.push('<span class="tag">ALL-TIME LOW</span>');
+    if (a.drop_pct > 0) tags.push('<span class="tag">−' + a.drop_pct + '%</span>');
+    return '<div class="alert">' + tags.join("") +
+      '<strong>' + esc(a.product) + '</strong> — ' +
+      '<span class="price">' + money(a.price, a.currency) + '</span>' +
+      (a.drop_pct > 0 ? ' <span class="quiet">was ' + money(a.previous_price, a.currency) + '</span>' : '') +
+      ' <a href="' + esc(a.url) + '" target="_blank" rel="noopener">view →</a></div>';
+  }).join("");
+}
+
+function renderProducts(products) {
+  const rows = document.getElementById("productRows");
+  if (!products.length) {
+    rows.innerHTML = '<tr><td colspan="5" class="quiet">Nothing tracked yet — add a product below.</td></tr>';
+  } else {
+    rows.innerHTML = products.map(p => {
+      const latest = p.latest;
+      const priceCell = latest
+        ? '<span class="num">' + money(latest.price, latest.currency) + '</span>' +
+          (p.is_atl ? '<span class="atlbadge">ALL-TIME LOW</span>' : '')
+        : '<span class="stock-na">—</span>';
+      const stockCell = !latest
+        ? '<span class="stock-na">—</span>'
+        : latest.in_stock
+          ? '<span class="stock-ok">● in stock</span>'
+          : '<span class="stock-out">● out of stock</span>';
+      return '<tr>' +
+        '<td><span class="pname"><a href="' + esc(p.url) + '" target="_blank" rel="noopener">' +
+          esc(p.name) + '</a></span><span class="prov">' + esc(p.provider) + '</span></td>' +
+        '<td>' + priceCell + '</td>' +
+        '<td>' + stockCell + '</td>' +
+        '<td class="checked">' + esc(relTime(latest && latest.checked_at)) + '</td>' +
+        '<td>' + sparkline(p.history) + '</td>' +
+        '</tr>';
+    }).join("");
+  }
+  const sel = document.getElementById("recProduct");
+  sel.innerHTML = products.map(p =>
+    '<option value="' + esc(p.name) + '">' + esc(p.name) + '</option>'
+  ).join("");
+}
+
+async function load() {
+  const [prodRes, alertRes] = await Promise.all([
+    fetch("/api/products"), fetch("/api/alerts")
+  ]);
+  if (!prodRes.ok) throw new Error("could not load products");
+  renderProducts(await prodRes.json());
+  renderAlerts((await alertRes.json()).alerts || []);
+}
+
+document.getElementById("addForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const name = document.getElementById("addName").value.trim();
+  const url = document.getElementById("addUrl").value.trim();
+  const res = await fetch("/api/add", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({name, url})
+  });
+  const data = await res.json();
+  if (res.ok) {
+    toast("ok", "Now tracking “" + name + "” via " + data.provider + ".");
+    e.target.reset();
+    await load();
+  } else {
+    toast("err", data.error || "could not add product");
+  }
+});
+
+document.getElementById("recordForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const body = {
+    name: document.getElementById("recProduct").value,
+    price: parseFloat(document.getElementById("recPrice").value),
+    currency: document.getElementById("recCurrency").value.trim() || "CAD",
+    out_of_stock: document.getElementById("recOos").checked
+  };
+  const res = await fetch("/api/record", {
+    method: "POST", headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  if (res.ok) {
+    toast("ok", "Recorded " + data.price.toFixed(2) + " " + data.currency +
+      " for “" + data.name + "”.");
+    e.target.reset();
+    document.getElementById("recCurrency").value = "CAD";
+    await load();
+  } else {
+    toast("err", data.error || "could not record price");
+  }
+});
+
+document.getElementById("checkBtn").addEventListener("click", async () => {
+  const btn = document.getElementById("checkBtn");
+  const out = document.getElementById("checkResult");
+  btn.disabled = true;
+  btn.textContent = "Checking…";
+  out.innerHTML = "";
+  try {
+    const res = await fetch("/api/check", {method: "POST"});
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "check failed");
+    const n = data.alerts.length;
+    out.innerHTML = "Checked just now — " +
+      (n ? "<strong>" + n + " alert" + (n === 1 ? "" : "s") + "</strong> 🎯" : "no alerts.") +
+      data.errors.map(e =>
+        '<p class="errline">⚠️ ' + esc(e.product) + ": " + esc(e.error) + "</p>"
+      ).join("");
+    await load();
+  } catch (err) {
+    out.innerHTML = '<p class="errline">⚠️ ' + esc(err.message) + "</p>";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Check now";
+  }
+});
+
+load().catch(err => {
+  document.getElementById("productRows").innerHTML =
+    '<tr><td colspan="5" class="errline">⚠️ ' + esc(err.message) + "</td></tr>";
+});
+</script>
+</body>
+</html>
